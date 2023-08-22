@@ -2,6 +2,7 @@
 ## Ссылка на проект
 
 * [Ссылка на проект в Git](https://github.com/AleksandraValts/movies-explorer-api)
+* [Ссылка на сервер](api.valts.movies.nomoredomainsicu.ru)
 
 ## Директории
 
