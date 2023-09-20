@@ -3,8 +3,6 @@ const NotFound = require('../errors/NotFound (404)');
 const Forbidden = require('../errors/Forbidden (403)');
 const BadRequest = require('../errors/BadRequest (400)');
 
-const CODE_SUCCESS = 201;
-
 module.exports.getMovies = (req, res, next) => {
   const { _id } = req.user;
   Movie.find({ owner: _id })
@@ -24,12 +22,6 @@ module.exports.getMovies = (req, res, next) => {
 
 module.exports.createMovie = (req, res, next) => {
   const {
-    country, director, duration, year, description, image,
-    trailerLink, thumbnail, movieId, nameRU, nameEN,
-  } = req.body;
-  const { _id } = req.user;
-  Movie.create({
-    owner: _id,
     country,
     director,
     duration,
@@ -41,14 +33,29 @@ module.exports.createMovie = (req, res, next) => {
     movieId,
     nameRU,
     nameEN,
+  } = req.body;
+  Movie.create({
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    movieId,
+    nameRU,
+    nameEN,
+    owner: req.user._id,
   })
-    .then((card) => {
-      const { _id: dbMovieId } = card;
-      res.status(CODE_SUCCESS).send({ message: dbMovieId });
-    })
+    .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequest('Данные переданы неверно'));
+        next(
+          new BadRequest(
+            'Данные переданы неверно',
+          ),
+        );
       } else {
         next(err);
       }

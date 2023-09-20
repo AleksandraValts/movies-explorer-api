@@ -47,11 +47,12 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  const { _id } = req.user;
-  User.findById(_id)
-    .then((user) => {
-      if (user) return res.send(user);
+  User.findById(req.user._id)
+    .orFail(() => {
       throw new NotFound('Пользователь не найден');
+    })
+    .then((user) => {
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -60,7 +61,7 @@ module.exports.getUserInfo = (req, res, next) => {
         next(err);
       }
     });
-};
+}
 
 module.exports.changeUserInfo = (req, res, next) => {
   const { name, email } = req.body;
